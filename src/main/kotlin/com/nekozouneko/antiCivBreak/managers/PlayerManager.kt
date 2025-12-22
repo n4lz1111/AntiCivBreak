@@ -29,8 +29,6 @@ class PlayerManager(val player: Player) {
         if(lastEndStoneDigStarted == -1L) return
         if(!player.isOnGround) totalAirTicks ++
         if(isInWater(player)) totalInWaterTicks ++
-
-        player.sendActionBar(Component.text("totalTicks: ${(endStoneDiggingDuration ?: 0) / 50}, airTicks: ${airTicks}, inWaterTicks: ${inWaterTicks}"))
     }
 
     private fun isInWater(player: Player): Boolean {
