@@ -1,6 +1,6 @@
 # New AntiCivBreak
 ANNI向けのCivBreak対策プラグイン
-> [!注意!]
+> [!CAUTION]
 > 動作には前提プラグイン`PacketEvents`の導入が必要です。
 ## モジュール
 ### `ConsistencyRayTrace`
