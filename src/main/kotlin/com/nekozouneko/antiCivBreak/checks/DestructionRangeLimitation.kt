@@ -10,7 +10,7 @@ class DestructionRangeLimitation : BlockChecker() {
         description = "ベクトル計算によって破壊できない距離をキャンセルします"
     }
     companion object {
-        private const val MAX_RANGE = 6 // ブロック破壊のリーチはBE > JEであり、BEはサバイバルモードで最大6ブロック
+        const val MAX_RANGE = 6 // ブロック破壊のリーチはBE > JEであり、BEはサバイバルモードで最大6ブロック
     }
     override fun handle(e: BlockBreakEvent) {
         val boundingBox = e.block.boundingBox
