@@ -34,7 +34,7 @@ class BreakingTimeSimulation : PacketChecker() {
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
         val diggingDuration = manager.endStoneDiggingDuration ?: return
-        val player = manager.getPlayer()
+        val player = manager.player
         val usingTool = player.inventory.itemInMainHand
 
         //BaseSpeed

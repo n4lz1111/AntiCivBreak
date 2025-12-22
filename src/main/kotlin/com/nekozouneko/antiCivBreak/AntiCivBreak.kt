@@ -37,8 +37,8 @@ class AntiCivBreak : JavaPlugin() {
         }
 
         fun uninitializePlayer(m: PlayerManager) {
-            if(m.getPlayer().isOnline) return
-            playerManagers.remove(m.getPlayer().uniqueId)
+            if(m.player.isOnline) return
+            playerManagers.remove(m.player.uniqueId)
         }
 
         fun getManager(uuid: UUID): PlayerManager? {

@@ -18,7 +18,7 @@ class PacketListener : PacketListener {
         //Material Check
         if(action.action == DiggingAction.START_DIGGING || action.action == DiggingAction.FINISHED_DIGGING){
             val blockPos = action.blockPosition
-            val world = manager.getPlayer().world
+            val world = manager.player.world
             val material = world.getBlockAt(blockPos.x, blockPos.y, blockPos.z).type
             if(material != Material.END_STONE) return
         }

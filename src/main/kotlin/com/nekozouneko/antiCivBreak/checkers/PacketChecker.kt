@@ -13,7 +13,7 @@ abstract class PacketChecker {
 
     fun violation(manager: PlayerManager){
         if(!isDetailsSafe()) return
-        NotificationManager.violation(manager.getPlayer(), checkType, description)
+        NotificationManager.violation(manager.player, checkType, description)
     }
 
     private fun isDetailsSafe() : Boolean{

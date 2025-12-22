@@ -3,12 +3,10 @@ package com.nekozouneko.antiCivBreak.managers
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
-class PlayerManager(private val player: Player) {
+class PlayerManager(val player: Player) {
     private var lastEndStoneDigStarted: Long = -1L
     private var totalAirTicks = -1
     private var totalInWaterTicks = -1
-
-    fun getPlayer(): Player = player
 
     val endStoneDiggingDuration: Long?
         get() = lastEndStoneDigStarted.takeIf { it != -1L }?.let { System.currentTimeMillis() - it }
