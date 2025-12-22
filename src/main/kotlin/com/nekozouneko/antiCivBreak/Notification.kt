@@ -1,7 +1,6 @@
 package com.nekozouneko.antiCivBreak
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.entity.Player
 
 class Notification {
