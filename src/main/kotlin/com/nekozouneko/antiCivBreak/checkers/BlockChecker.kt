@@ -1,6 +1,6 @@
 package com.nekozouneko.antiCivBreak.checkers
 
-import com.nekozouneko.antiCivBreak.Notification
+import com.nekozouneko.antiCivBreak.managers.NotificationManager
 import org.bukkit.event.block.BlockBreakEvent
 
 abstract class BlockChecker {
@@ -11,7 +11,7 @@ abstract class BlockChecker {
 
     fun violation(e: BlockBreakEvent){
         if(!isDetailsSafe()) return
-        Notification.violation(e.player, checkType, description)
+        NotificationManager.violation(e.player, checkType, description)
     }
 
     private fun isDetailsSafe() : Boolean{

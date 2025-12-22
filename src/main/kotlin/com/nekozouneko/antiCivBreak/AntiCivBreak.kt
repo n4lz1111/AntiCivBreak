@@ -1,25 +1,60 @@
 package com.nekozouneko.antiCivBreak
 
 import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.event.PacketListenerPriority
 import com.nekozouneko.antiCivBreak.checkers.BlockChecker
+import com.nekozouneko.antiCivBreak.checkers.PacketChecker
+import com.nekozouneko.antiCivBreak.checks.BreakingTimeSimulation
 import com.nekozouneko.antiCivBreak.checks.ConsistencyRayTrace
 import com.nekozouneko.antiCivBreak.listeners.BlockBreakListener
+import com.nekozouneko.antiCivBreak.listeners.PacketListener
+import com.nekozouneko.antiCivBreak.listeners.PlayerJoinListener
+import com.nekozouneko.antiCivBreak.listeners.PlayerQuitListener
+import com.nekozouneko.antiCivBreak.managers.PlayerManager
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class AntiCivBreak : JavaPlugin() {
     companion object {
         lateinit var instance: JavaPlugin
 
+        private val playerManagers: MutableMap<UUID, PlayerManager> = ConcurrentHashMap()
+
         val blockHandlers: List<BlockChecker> = listOf(
             ConsistencyRayTrace()
         )
+        val packetHandlers: List<PacketChecker> = listOf(
+            BreakingTimeSimulation()
+        )
+
+        fun initializePlayer(p: Player) {
+            if(playerManagers.containsKey(p.uniqueId)) return
+            playerManagers[p.uniqueId] = PlayerManager(p)
+        }
+
+        fun uninitializePlayer(m: PlayerManager) {
+            if(m.getPlayer().isOnline) return
+            playerManagers.remove(m.getPlayer().uniqueId)
+        }
+
+        fun getManager(uuid: UUID): PlayerManager? {
+            return playerManagers[uuid]
+        }
     }
 
     override fun onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this))
         PacketEvents.getAPI().load()
+
+        //PacketEvents Listeners
+        PacketEvents.getAPI().eventManager.registerListener(
+            PacketListener(),
+            PacketListenerPriority.NORMAL
+        )
     }
 
     override fun onEnable() {
@@ -30,9 +65,22 @@ class AntiCivBreak : JavaPlugin() {
 
         //Listeners
         val listeners: List<Listener> = listOf(
+            PlayerJoinListener(),
+            PlayerQuitListener(),
             BlockBreakListener()
         )
         for(listener in listeners) server.pluginManager.registerEvents(listener, this)
+
+        //PlayerManager AutoFixer (Prevention Memory Leak)
+        server.scheduler.runTaskTimer(this, Runnable {
+            for(p in server.onlinePlayers) initializePlayer(p)
+            for(m in playerManagers) uninitializePlayer(m.value)
+        }, 0L, 20L)
+
+        //PlayerManager Ticker
+        server.scheduler.runTaskTimer(this, Runnable {
+            for(m in playerManagers) m.value.tick()
+        }, 0L, 1L)
     }
 
     override fun onDisable() {

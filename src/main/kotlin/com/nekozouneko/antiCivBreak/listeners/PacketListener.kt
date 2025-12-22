@@ -1,0 +1,28 @@
+package com.nekozouneko.antiCivBreak.listeners
+
+import com.github.retrooper.packetevents.event.PacketListener
+import com.github.retrooper.packetevents.event.PacketReceiveEvent
+import com.github.retrooper.packetevents.protocol.packettype.PacketType
+import com.github.retrooper.packetevents.protocol.player.DiggingAction
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
+import com.nekozouneko.antiCivBreak.AntiCivBreak
+
+class PacketListener : PacketListener {
+    override fun onPacketReceive(event: PacketReceiveEvent) {
+        if(event.packetType != PacketType.Play.Client.PLAYER_DIGGING) return
+
+        val action = WrapperPlayClientPlayerDigging(event)
+        val manager = AntiCivBreak.getManager(event.user.uuid) ?: return
+
+        if (action.action == DiggingAction.FINISHED_DIGGING) {
+            for(handler in AntiCivBreak.packetHandlers) handler.handle(manager, action, event)
+        }
+
+        when(action.action){
+            DiggingAction.START_DIGGING -> manager.startEndStoneDigging()
+            DiggingAction.FINISHED_DIGGING -> manager.resetEndStoneDigging()
+            DiggingAction.CANCELLED_DIGGING -> manager.resetEndStoneDigging()
+            else -> return
+        }
+    }
+}
