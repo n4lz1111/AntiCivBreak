@@ -7,6 +7,7 @@ import com.nekozouneko.antiCivBreak.checkers.PacketChecker
 import com.nekozouneko.antiCivBreak.checks.BreakingTimeSimulation
 import com.nekozouneko.antiCivBreak.checks.ConsistencyRayTrace
 import com.nekozouneko.antiCivBreak.checks.DestructionRangeLimitation
+import com.nekozouneko.antiCivBreak.checks.InvalidPacket
 import com.nekozouneko.antiCivBreak.listeners.BlockBreakListener
 import com.nekozouneko.antiCivBreak.listeners.PacketListener
 import com.nekozouneko.antiCivBreak.listeners.PlayerJoinListener
@@ -30,7 +31,8 @@ class AntiCivBreak : JavaPlugin() {
             DestructionRangeLimitation()
         )
         val packetHandlers: List<PacketChecker> = listOf(
-            BreakingTimeSimulation()
+            BreakingTimeSimulation(),
+            InvalidPacket()
         )
 
         fun initializePlayer(p: Player) {
