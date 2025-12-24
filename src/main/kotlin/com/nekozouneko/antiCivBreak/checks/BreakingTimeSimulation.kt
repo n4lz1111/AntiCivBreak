@@ -22,7 +22,7 @@ class BreakingTimeSimulation : PacketChecker() {
         val totalTicks = diggingDuration.toDouble() / 50
 
         val predictionTicks = BlockBreakSimulator.getEndStonePredictionTicks(manager) ?: return
-        val diffTicks = abs(predictionTicks - totalTicks)
+        val diffTicks = predictionTicks - totalTicks
         if(predictionTicks == 0.0) return
 
         if(predictionTicks < ALLOWED_DIFF_TICKS) {

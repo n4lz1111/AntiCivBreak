@@ -52,7 +52,6 @@ class PacketListener : PacketListener {
         when(action.action){
             DiggingAction.START_DIGGING -> manager.startEndStoneDigging()
             DiggingAction.FINISHED_DIGGING -> manager.resetEndStoneDigging()
-            DiggingAction.CANCELLED_DIGGING -> manager.resetEndStoneDigging()
             else -> return
         }
 
