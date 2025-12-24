@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
 import com.nekozouneko.antiCivBreak.checkers.PacketChecker
 import com.nekozouneko.antiCivBreak.managers.PlayerManager
+import com.nekozouneko.antiCivBreak.utils.PacketUtils
 
 class InvalidPacket : PacketChecker() {
     init {
@@ -19,6 +20,7 @@ class InvalidPacket : PacketChecker() {
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
         if(invalidPacketBeforeFinished.contains(manager.lastAction)) {
+            PacketUtils.syncClientWithFakeAcknowledge(manager, action)
             violation(manager)
             event.isCancelled = true
         }

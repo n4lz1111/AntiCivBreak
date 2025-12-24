@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPl
 import com.nekozouneko.antiCivBreak.checkers.PacketChecker
 import com.nekozouneko.antiCivBreak.managers.PlayerManager
 import com.nekozouneko.antiCivBreak.utils.BlockBreakSimulator
+import com.nekozouneko.antiCivBreak.utils.PacketUtils
 import kotlin.math.abs
 
 class BreakingTimeSimulation : PacketChecker() {
@@ -28,12 +29,14 @@ class BreakingTimeSimulation : PacketChecker() {
             //Ratio評価
             val ratio = (totalTicks - predictionTicks) / predictionTicks
             if(ratio < 0 && abs(ratio) > ALLOWED_DIFF_RATIO){
+                PacketUtils.syncClientWithFakeAcknowledge(manager, action)
                 violation(manager)
                 event.isCancelled = true
             }
         }else{
             //しきい値評価
             if(diffTicks > ALLOWED_DIFF_TICKS){
+                PacketUtils.syncClientWithFakeAcknowledge(manager, action)
                 violation(manager)
                 event.isCancelled = true
             }
