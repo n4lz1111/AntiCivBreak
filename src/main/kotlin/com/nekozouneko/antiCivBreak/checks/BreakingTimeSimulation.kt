@@ -16,8 +16,7 @@ class BreakingTimeSimulation : PacketChecker() {
         description = "シミュレーションした破壊時間の予測値との差分を確認します"
     }
     companion object {
-        const val ALLOWED_DIFF_TICKS = 6
-        const val ALLOWED_DIFF_RATIO = 0.5 //予測値がALLOWED_DIFF_TICKS以下の場合は差分が超えることがないため、比率計算を行います。
+        const val ALLOWED_DIFF_TICKS = 0.8
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
         val diggingDuration = manager.endStoneDiggingDuration ?: return
@@ -29,27 +28,17 @@ class BreakingTimeSimulation : PacketChecker() {
         if(predictionTicks == 0.0) return
 
         //For Debug Mode
-        val debugComponent = Component.text("§8[§bBreakingTimeSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Ratio: ${ratio}")
+        val debugComponent = Component.text("§8[§bBreakingTimeSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Diff: ${diffTicks}, Ratio: ${ratio}")
         for(m in AntiCivBreak.getManagers().filter {
             it.isDebugEnabled
         }) {
             m.player.sendMessage(debugComponent)
         }
 
-        if(predictionTicks < ALLOWED_DIFF_TICKS) {
-            //Ratio評価
-            if(ratio < 0 && abs(ratio) > ALLOWED_DIFF_RATIO){
-                PacketUtils.syncClientWithFakeAcknowledge(manager, action)
-                violation(manager)
-                event.isCancelled = true
-            }
-        }else{
-            //しきい値評価
-            if(diffTicks > ALLOWED_DIFF_TICKS){
-                PacketUtils.syncClientWithFakeAcknowledge(manager, action)
-                violation(manager)
-                event.isCancelled = true
-            }
+        if(diffTicks > ALLOWED_DIFF_TICKS){
+            PacketUtils.syncClientWithFakeAcknowledge(manager, action)
+            violation(manager)
+            event.isCancelled = true
         }
     }
 }
