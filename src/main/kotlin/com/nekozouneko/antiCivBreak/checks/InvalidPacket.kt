@@ -22,7 +22,6 @@ class InvalidPacket : PacketChecker() {
                 PacketUtils.syncClientWithFakeAcknowledge(manager, action)
                 violation(manager)
                 event.isCancelled = true
-                return
             }
         }
     }

@@ -5,29 +5,42 @@ import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.protocol.player.User
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import kotlin.collections.set
 
 class PlayerManager(val player: Player) {
     companion object{
         private const val LAST_ACTION_QUEUE_SIZE = 3
     }
     var isDebugEnabled = false
-
-    private var lastEndStoneDigStarted: Long = -1L
-    private var totalAirTicks = -1
-    private var totalInWaterTicks = -1
-    private var packetLastActions = ArrayDeque<DiggingAction>(LAST_ACTION_QUEUE_SIZE)
-
     val packetUser: User
         get() = PacketEvents.getAPI().playerManager.getUser(player)
-
-    val endStoneDiggingDuration: Long?
-        get() = lastEndStoneDigStarted.takeIf { it != -1L }?.let { System.currentTimeMillis() - it }
-    val airTicks: Int?
-        get() = totalAirTicks.takeIf { it != -1}
-    val inWaterTicks: Int?
-        get() = totalInWaterTicks.takeIf { it != -1 }
     val lastActions: List<DiggingAction>
         get() = packetLastActions.toList()
+
+    private var packetLastActions = ArrayDeque<DiggingAction>(LAST_ACTION_QUEUE_SIZE)
+
+    private var lastEndStoneDigs: MutableMap<DiggingAction, Long> = mutableMapOf(
+        DiggingAction.START_DIGGING to -1L,
+        DiggingAction.FINISHED_DIGGING to -1L
+    )
+    private var totalAirTicks: MutableMap<DiggingAction, Int> = mutableMapOf(
+        DiggingAction.START_DIGGING to -1,
+        DiggingAction.FINISHED_DIGGING to -1
+    )
+    private var totalInWaterTicks: MutableMap<DiggingAction, Int> = mutableMapOf(
+        DiggingAction.START_DIGGING to -1,
+        DiggingAction.FINISHED_DIGGING to -1
+    )
+
+    fun getActionDuration(action: DiggingAction) : Long? {
+        return lastEndStoneDigs[action].takeIf { it != -1L }?.let { System.currentTimeMillis() - it }
+    }
+    fun getAirTicks(action: DiggingAction): Int?{
+        return totalAirTicks[action].takeIf { it != -1 }
+    }
+    fun getInWaterTicks(action: DiggingAction): Int?{
+        return totalInWaterTicks[action].takeIf { it != -1 }
+    }
 
     fun addAction(action: DiggingAction) {
         if (packetLastActions.size >= LAST_ACTION_QUEUE_SIZE) {
@@ -36,19 +49,22 @@ class PlayerManager(val player: Player) {
         packetLastActions.addLast(action)
     }
 
-    fun startEndStoneDigging() {
-        lastEndStoneDigStarted = System.currentTimeMillis()
+    fun setEndStoneDigging(action: DiggingAction) {
+        lastEndStoneDigs[action] = System.currentTimeMillis()
     }
-    fun resetEndStoneDigging() {
-        lastEndStoneDigStarted = -1L
-        totalAirTicks = -1
-        totalInWaterTicks = -1
+    fun resetEndStoneDigging(action: DiggingAction) {
+        lastEndStoneDigs[action] = -1L
+        totalAirTicks[action] = -1
+        totalInWaterTicks[action] = -1
     }
 
     fun tick(){
-        if(lastEndStoneDigStarted == -1L) return
-        if(!player.isOnGround) totalAirTicks ++
-        if(isInWater(player)) totalInWaterTicks ++
+        for (action in lastEndStoneDigs) {
+            if(action.value == -1L) continue
+            if(!player.isOnGround) totalAirTicks[action.key] = (totalAirTicks[action.key] ?: 0)  + 1
+            if(isInWater(player)) totalInWaterTicks[action.key] = (totalInWaterTicks[action.key] ?: 0) + 1
+
+        }
     }
 
     private fun isInWater(player: Player): Boolean {

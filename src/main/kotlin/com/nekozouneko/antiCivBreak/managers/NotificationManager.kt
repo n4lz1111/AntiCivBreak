@@ -16,6 +16,14 @@ class NotificationManager {
             for (target in getTargets()) target.sendMessage(component)
         }
 
+        fun sendDebugMessage(message: String){
+            for(m in AntiCivBreak.getManagers().filter {
+                it.isDebugEnabled
+            }) {
+                m.player.sendMessage(Component.text(message))
+            }
+        }
+
         private fun getTargets(): List<Player> {
             return AntiCivBreak.instance.server.onlinePlayers.filter {
                 it.hasPermission("anticivbreak.notify")

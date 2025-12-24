@@ -9,24 +9,27 @@ import com.nekozouneko.antiCivBreak.managers.PlayerManager
 import com.nekozouneko.antiCivBreak.utils.BlockBreakSimulator
 import com.nekozouneko.antiCivBreak.utils.PacketUtils
 
-class BreakingTimeSimulation : PacketChecker() {
+class FinishedPacketSimulation : PacketChecker() {
     init {
-        checkType = "BreakingTimeSimulation"
-        description = "シミュレーションした破壊時間の予測値との差分を確認します"
+        checkType = "FinishedPacketSimulation"
+        description = "FinishedDiggingPacketの送信間隔の予測を行います。"
     }
     companion object {
         const val ALLOWED_DIFF_TICKS = 0.8
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
-        val diggingDuration = manager.getActionDuration(DiggingAction.START_DIGGING) ?: return
+        //Pattern: FINISHED_DIGGING → FINISHED_DIGGING
+        if(manager.lastActions.isEmpty() || manager.lastActions.last() != DiggingAction.FINISHED_DIGGING) return
+
+        val diggingDuration = manager.getActionDuration(DiggingAction.FINISHED_DIGGING) ?: return
         val totalTicks = diggingDuration.toDouble() / 50
 
-        val predictionTicks = BlockBreakSimulator.getEndStonePredictionTicks(manager, DiggingAction.START_DIGGING, true) ?: return
+        val predictionTicks = BlockBreakSimulator.getEndStonePredictionTicks(manager, DiggingAction.FINISHED_DIGGING, false) ?: return
         val diffTicks = predictionTicks - totalTicks
         if(predictionTicks == 0.0) return
 
         //For Debug Mode
-        val debugMessage = "§8[§bBreakingTimeSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Diff: ${diffTicks}"
+        val debugMessage = "§8[§bFinishedPacketSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Diff: ${diffTicks}"
         NotificationManager.sendDebugMessage(debugMessage)
 
         if(diffTicks > ALLOWED_DIFF_TICKS){

@@ -7,6 +7,7 @@ import com.nekozouneko.antiCivBreak.checkers.PacketChecker
 import com.nekozouneko.antiCivBreak.checks.BreakingTimeSimulation
 import com.nekozouneko.antiCivBreak.checks.ConsistencyRayTrace
 import com.nekozouneko.antiCivBreak.checks.DestructionRangeLimitation
+import com.nekozouneko.antiCivBreak.checks.FinishedPacketSimulation
 import com.nekozouneko.antiCivBreak.checks.InvalidPacket
 import com.nekozouneko.antiCivBreak.commands.CivSimulateCommand
 import com.nekozouneko.antiCivBreak.commands.CivDebugCommand
@@ -34,6 +35,7 @@ class AntiCivBreak : JavaPlugin() {
         )
         val packetHandlers: List<PacketChecker> = listOf(
             BreakingTimeSimulation(),
+            FinishedPacketSimulation(),
             InvalidPacket()
         )
 
