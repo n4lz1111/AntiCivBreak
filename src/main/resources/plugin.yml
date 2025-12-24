@@ -6,13 +6,13 @@ depend:
   - packetevents
 
 commands:
-  packetcapture:
-    permission: anticivbreak.commands.packetcapture
+  civdebug:
+    permission: anticivbreak.commands.civdebug
   civsimulate:
     permission: anticivbreak.commands.civsimulate
 
 permissions:
-  anticivbreak.commands.packetcapture:
+  anticivbreak.commands.civdebug:
     default: op
   anticivbreak.commands.civsimulate:
     default: op

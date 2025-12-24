@@ -8,18 +8,18 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.entity.Player
 
-class PacketCaptureCommand : CommandExecutor, TabExecutor{
+class CivDebugCommand : CommandExecutor, TabExecutor{
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<out String>): Boolean {
         if(p0 !is Player) {
             p0.sendMessage("§cプレイヤーのみ実行可能なコマンドです。")
             return true
         }
         val manager = AntiCivBreak.getManager(p0.uniqueId) ?: return false
-        manager.isPacketCaptureEnabled = manager.isPacketCaptureEnabled.also {
+        manager.isDebugEnabled = manager.isDebugEnabled.also {
             if(it){
-                p0.sendMessage(Component.text("§cパケットキャプチャを無効にしました。"))
+                p0.sendMessage(Component.text("§cデバッグモードを無効にしました。"))
             }else{
-                p0.sendMessage(Component.text("§aパケットキャプチャを有効にしました。"))
+                p0.sendMessage(Component.text("§aデバッグモードを有効にしました。"))
             }
         }.not()
         return true

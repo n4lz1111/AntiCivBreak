@@ -2,10 +2,12 @@ package com.nekozouneko.antiCivBreak.checks
 
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
+import com.nekozouneko.antiCivBreak.AntiCivBreak
 import com.nekozouneko.antiCivBreak.checkers.PacketChecker
 import com.nekozouneko.antiCivBreak.managers.PlayerManager
 import com.nekozouneko.antiCivBreak.utils.BlockBreakSimulator
 import com.nekozouneko.antiCivBreak.utils.PacketUtils
+import net.kyori.adventure.text.Component
 import kotlin.math.abs
 
 class BreakingTimeSimulation : PacketChecker() {
@@ -23,11 +25,19 @@ class BreakingTimeSimulation : PacketChecker() {
 
         val predictionTicks = BlockBreakSimulator.getEndStonePredictionTicks(manager) ?: return
         val diffTicks = predictionTicks - totalTicks
+        val ratio = (totalTicks - predictionTicks) / predictionTicks
         if(predictionTicks == 0.0) return
+
+        //For Debug Mode
+        val debugComponent = Component.text("§8[§bBreakingTimeSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Ratio: ${ratio}")
+        for(m in AntiCivBreak.getManagers().filter {
+            it.isDebugEnabled
+        }) {
+            m.player.sendMessage(debugComponent)
+        }
 
         if(predictionTicks < ALLOWED_DIFF_TICKS) {
             //Ratio評価
-            val ratio = (totalTicks - predictionTicks) / predictionTicks
             if(ratio < 0 && abs(ratio) > ALLOWED_DIFF_RATIO){
                 PacketUtils.syncClientWithFakeAcknowledge(manager, action)
                 violation(manager)

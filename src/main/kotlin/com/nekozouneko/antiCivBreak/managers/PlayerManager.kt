@@ -10,7 +10,7 @@ class PlayerManager(val player: Player) {
     companion object{
         private const val LAST_ACTION_QUEUE_SIZE = 3
     }
-    var isPacketCaptureEnabled = false
+    var isDebugEnabled = false
 
     private var lastEndStoneDigStarted: Long = -1L
     private var totalAirTicks = -1

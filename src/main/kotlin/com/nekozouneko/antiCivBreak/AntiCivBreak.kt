@@ -9,7 +9,7 @@ import com.nekozouneko.antiCivBreak.checks.ConsistencyRayTrace
 import com.nekozouneko.antiCivBreak.checks.DestructionRangeLimitation
 import com.nekozouneko.antiCivBreak.checks.InvalidPacket
 import com.nekozouneko.antiCivBreak.commands.CivSimulateCommand
-import com.nekozouneko.antiCivBreak.commands.PacketCaptureCommand
+import com.nekozouneko.antiCivBreak.commands.CivDebugCommand
 import com.nekozouneko.antiCivBreak.listeners.BlockBreakListener
 import com.nekozouneko.antiCivBreak.listeners.PacketListener
 import com.nekozouneko.antiCivBreak.listeners.PlayerJoinListener
@@ -81,7 +81,7 @@ class AntiCivBreak : JavaPlugin() {
         for(listener in listeners) server.pluginManager.registerEvents(listener, this)
 
         //Commands
-        getCommand("packetcapture")?.setExecutor(PacketCaptureCommand())
+        getCommand("civdebug")?.setExecutor(CivDebugCommand())
         getCommand("civsimulate")?.setExecutor(CivSimulateCommand())
 
         //PlayerManager AutoFixer (Prevention Memory Leak)

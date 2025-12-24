@@ -35,13 +35,13 @@ class PacketListener : PacketListener {
             if(material != Material.END_STONE) return
         }
 
-        //For Packet Capture
+        //For Debug Mode
         if(packetAboutBreakAction.contains(action.action)){
-            val captureComponent = Component.text("§8[§bPacket Received§8] §fUser: ${manager.player.name}, Action: ${action.action}")
+            val debugComponent = Component.text("§8[§bPacket Received§8] §fUser: ${manager.player.name}, Action: ${action.action}")
             for(m in AntiCivBreak.getManagers().filter {
-                it.isPacketCaptureEnabled
+                it.isDebugEnabled
             }) {
-                m.player.sendMessage(captureComponent)
+                m.player.sendMessage(debugComponent)
             }
         }
 
