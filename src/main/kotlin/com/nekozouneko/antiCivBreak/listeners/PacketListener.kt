@@ -10,6 +10,13 @@ import org.bukkit.GameMode
 import org.bukkit.Material
 
 class PacketListener : PacketListener {
+    companion object {
+        private val packetAboutBreakAction: List<DiggingAction> = listOf(
+            DiggingAction.START_DIGGING,
+            DiggingAction.CANCELLED_DIGGING,
+            DiggingAction.FINISHED_DIGGING
+        )
+    }
     override fun onPacketReceive(event: PacketReceiveEvent) {
         if(event.packetType != PacketType.Play.Client.PLAYER_DIGGING) return
 
@@ -20,7 +27,7 @@ class PacketListener : PacketListener {
         if(manager.player.gameMode != GameMode.SURVIVAL) return
 
         //Material Check
-        if(action.action == DiggingAction.START_DIGGING || action.action == DiggingAction.FINISHED_DIGGING){
+        if(packetAboutBreakAction.contains(action.action)){
             val blockPos = action.blockPosition
             val world = manager.player.world
             val material = world.getBlockAt(blockPos.x, blockPos.y, blockPos.z).type

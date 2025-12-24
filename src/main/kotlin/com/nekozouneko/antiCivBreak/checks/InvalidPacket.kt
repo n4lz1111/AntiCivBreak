@@ -11,9 +11,16 @@ class InvalidPacket : PacketChecker() {
         checkType = "InvalidPacket"
         description = "CivBreak特有の不正なパケット順序をキャンセルします"
     }
+    companion object {
+        val invalidPacketBeforeFinished: List<DiggingAction> = listOf(
+            DiggingAction.CANCELLED_DIGGING,
+            DiggingAction.FINISHED_DIGGING
+        )
+    }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
-        if(manager.lastAction != DiggingAction.FINISHED_DIGGING) return
-        violation(manager)
-        event.isCancelled = true
+        if(invalidPacketBeforeFinished.contains(manager.lastAction)) {
+            violation(manager)
+            event.isCancelled = true
+        }
     }
 }
