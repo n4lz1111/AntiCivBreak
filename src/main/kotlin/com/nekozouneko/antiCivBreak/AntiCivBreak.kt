@@ -57,7 +57,7 @@ class AntiCivBreak : JavaPlugin() {
         //PacketEvents Listeners
         PacketEvents.getAPI().eventManager.registerListener(
             PacketListener(),
-            PacketListenerPriority.NORMAL
+            PacketListenerPriority.LOWEST,
         )
     }
 

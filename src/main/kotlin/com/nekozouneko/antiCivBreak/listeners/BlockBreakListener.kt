@@ -9,7 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 
 class BlockBreakListener : Listener {
-    @EventHandler(ignoreCancelled = false, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
     fun onBreak(e: BlockBreakEvent){
         if(e.player.gameMode != GameMode.SURVIVAL) return
         if(e.block.type != Material.END_STONE) return
