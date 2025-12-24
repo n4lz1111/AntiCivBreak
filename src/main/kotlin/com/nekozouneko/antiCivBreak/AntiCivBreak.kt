@@ -8,6 +8,7 @@ import com.nekozouneko.antiCivBreak.checks.BreakingTimeSimulation
 import com.nekozouneko.antiCivBreak.checks.ConsistencyRayTrace
 import com.nekozouneko.antiCivBreak.checks.DestructionRangeLimitation
 import com.nekozouneko.antiCivBreak.checks.InvalidPacket
+import com.nekozouneko.antiCivBreak.commands.PacketCaptureCommand
 import com.nekozouneko.antiCivBreak.listeners.BlockBreakListener
 import com.nekozouneko.antiCivBreak.listeners.PacketListener
 import com.nekozouneko.antiCivBreak.listeners.PlayerJoinListener
@@ -45,6 +46,9 @@ class AntiCivBreak : JavaPlugin() {
             playerManagers.remove(m.player.uniqueId)
         }
 
+        fun getManagers() : List<PlayerManager> {
+            return playerManagers.values.toList()
+        }
         fun getManager(uuid: UUID): PlayerManager? {
             return playerManagers[uuid]
         }
@@ -74,6 +78,9 @@ class AntiCivBreak : JavaPlugin() {
             BlockBreakListener()
         )
         for(listener in listeners) server.pluginManager.registerEvents(listener, this)
+
+        //Commands
+        getCommand("packetcapture")?.setExecutor(PacketCaptureCommand())
 
         //PlayerManager AutoFixer (Prevention Memory Leak)
         server.scheduler.runTaskTimer(this, Runnable {

@@ -7,6 +7,8 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 
 class PlayerManager(val player: Player) {
+    var isPacketCaptureEnabled = false
+
     private var lastEndStoneDigStarted: Long = -1L
     private var totalAirTicks = -1
     private var totalInWaterTicks = -1

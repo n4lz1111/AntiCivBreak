@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
 import com.nekozouneko.antiCivBreak.AntiCivBreak
+import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.Material
 
@@ -32,6 +33,16 @@ class PacketListener : PacketListener {
             val world = manager.player.world
             val material = world.getBlockAt(blockPos.x, blockPos.y, blockPos.z).type
             if(material != Material.END_STONE) return
+        }
+
+        //For Packet Capture
+        if(packetAboutBreakAction.contains(action.action)){
+            val captureComponent = Component.text("§8[§bPacket Received§8] §fUser: ${manager.player.name}, Action: ${action.action}")
+            for(m in AntiCivBreak.getManagers().filter {
+                it.isPacketCaptureEnabled
+            }) {
+                m.player.sendMessage(captureComponent)
+            }
         }
 
         if(action.action == DiggingAction.FINISHED_DIGGING) {

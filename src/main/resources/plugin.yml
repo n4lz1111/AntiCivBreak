@@ -4,3 +4,13 @@ main: com.nekozouneko.antiCivBreak.AntiCivBreak
 api-version: '1.21'
 depend:
   - packetevents
+
+commands:
+  packetcapture:
+    permission: anticivbreak.commands.packetcapture
+
+permissions:
+  anticivbreak.commands.packetcapture:
+    default: op
+  anticivbreak.notify:
+    default: op
