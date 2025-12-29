@@ -3,6 +3,7 @@ package com.nekozouneko.antiCivBreak.managers
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.protocol.player.User
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import kotlin.collections.set
@@ -19,17 +20,17 @@ class PlayerManager(val player: Player) {
 
     private var packetLastActions = ArrayDeque<DiggingAction>(LAST_ACTION_QUEUE_SIZE)
 
-    private var lastEndStoneDigs: MutableMap<DiggingAction, Long> = mutableMapOf(
-        DiggingAction.START_DIGGING to -1L,
-        DiggingAction.FINISHED_DIGGING to -1L
+    private var lastEndStoneDigs: MutableMap<DiggingAction, Long?> = mutableMapOf(
+        DiggingAction.START_DIGGING to null,
+        DiggingAction.FINISHED_DIGGING to null
     )
-    private var totalAirTicks: MutableMap<DiggingAction, Int> = mutableMapOf(
-        DiggingAction.START_DIGGING to -1,
-        DiggingAction.FINISHED_DIGGING to -1
+    private var totalAirTicks: MutableMap<DiggingAction, Int?> = mutableMapOf(
+        DiggingAction.START_DIGGING to null,
+        DiggingAction.FINISHED_DIGGING to null
     )
-    private var totalInWaterTicks: MutableMap<DiggingAction, Int> = mutableMapOf(
-        DiggingAction.START_DIGGING to -1,
-        DiggingAction.FINISHED_DIGGING to -1
+    private var totalInWaterTicks: MutableMap<DiggingAction, Int?> = mutableMapOf(
+        DiggingAction.START_DIGGING to null,
+        DiggingAction.FINISHED_DIGGING to null
     )
 
     fun getActionDuration(action: DiggingAction) : Long? {
@@ -52,10 +53,14 @@ class PlayerManager(val player: Player) {
     fun setEndStoneDigging(action: DiggingAction) {
         lastEndStoneDigs[action] = System.currentTimeMillis()
     }
+    fun resetEndStoneDiggings(){
+        for (dig in lastEndStoneDigs.keys){
+            resetEndStoneDigging(dig)
+        }
+    }
     fun resetEndStoneDigging(action: DiggingAction) {
-        lastEndStoneDigs[action] = -1L
-        totalAirTicks[action] = -1
-        totalInWaterTicks[action] = -1
+        totalAirTicks[action] = null
+        totalInWaterTicks[action] = null
     }
 
     fun tick(){

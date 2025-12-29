@@ -1,33 +1,24 @@
 package com.nekozouneko.antiCivBreak.utils
 
 import com.github.retrooper.packetevents.protocol.player.DiggingAction
+import com.nekozouneko.antiCivBreak.managers.NotificationManager
 import com.nekozouneko.antiCivBreak.managers.PlayerManager
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.potion.PotionEffectType
+import kotlin.math.ceil
 import kotlin.math.pow
 
 class BlockBreakSimulator {
     companion object {
         const val END_STONE_HARDNESS = 3 //基本硬度
-        private const val LOW_BIAS = 1.025
-        private const val MID_BIAS = 1.05
-        private const val HIGH_BIAS = 1.075
-        private val biasedProperToolMultiple: Map<Material, Double> = mapOf(
-            Material.WOODEN_PICKAXE to 2.0 * LOW_BIAS,
-            Material.STONE_PICKAXE to 4.0 * LOW_BIAS,
-            Material.IRON_PICKAXE to 6.0 * LOW_BIAS,
-            Material.DIAMOND_PICKAXE to 8.0 * LOW_BIAS,
-            Material.NETHERITE_PICKAXE to 9.0 * HIGH_BIAS,
-            Material.GOLDEN_PICKAXE to 12.0 * MID_BIAS - 0.4
-        )
-        private val rawProperToolMultiple: Map<Material, Double> = mapOf(
+        private val properToolMultiple: Map<Material, Double> = mapOf(
             Material.WOODEN_PICKAXE to 2.0,
             Material.STONE_PICKAXE to 4.0,
             Material.IRON_PICKAXE to 6.0,
             Material.DIAMOND_PICKAXE to 8.0,
             Material.NETHERITE_PICKAXE to 9.0,
-            Material.GOLDEN_PICKAXE to 12.0 - 0.4
+            Material.GOLDEN_PICKAXE to 12.0
         )
         private val fatigueMultiple: List<Double> = listOf(1.0, 0.3, 0.09, 0.0027, 0.00081)
 
@@ -37,11 +28,7 @@ class BlockBreakSimulator {
             val usingTool = player.inventory.itemInMainHand
 
             //BaseSpeed
-            var breakSpeed = if(isBias){
-                biasedProperToolMultiple[usingTool.type] ?: 1.0
-            }else{
-                rawProperToolMultiple[usingTool.type] ?: 1.0
-            }
+            var breakSpeed = properToolMultiple[usingTool.type] ?: 1.0
 
             //Efficiency Enchantment
             if (breakSpeed > 1) {
@@ -64,7 +51,7 @@ class BlockBreakSimulator {
             }
 
             //Player's Around Environment
-            val totalTicks = diggingDuration.toDouble() / 50 // 1tick = 50ms
+            val totalTicks = ceil(diggingDuration.toDouble() / 50) // 1tick = 50ms
             val airTicks = manager.getAirTicks(action)?.toDouble()
             val inWaterTicks = manager.getInWaterTicks(action)?.toDouble()
 
@@ -83,11 +70,15 @@ class BlockBreakSimulator {
                 100
             }
 
+            //For Debug Mode
+            val debugMessage = "§8[§bBlockBreakSimulator§8] §fTotalTicks: ${totalTicks}, AirTicks ${airTicks}, InWaterTicks: ${inWaterTicks}"
+            NotificationManager.sendDebugMessage(debugMessage)
+
             return END_STONE_HARDNESS / breakSpeed
         }
 
         private fun isProperTool(m: Material) : Boolean {
-            return biasedProperToolMultiple.containsKey(m)
+            return properToolMultiple.containsKey(m)
         }
     }
 }
