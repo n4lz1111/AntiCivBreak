@@ -5,18 +5,22 @@ import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.protocol.player.User
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import kotlin.math.tanh
 
 class PlayerManager(val player: Player) {
     companion object{
         private const val LAST_ACTION_QUEUE_SIZE = 3
+        private const val LAST_SIMULATION_DIFF_TIME_QUEUE_SIZE = 20
     }
     var isDebugEnabled = false
+    var lastSimulatedTicks: Double? = null
+    var lastSimulatedTime: Long? = null
+    var lastSimulationDiffTime = ArrayDeque<Double>(LAST_SIMULATION_DIFF_TIME_QUEUE_SIZE)
+
     val packetUser: User
         get() = PacketEvents.getAPI().playerManager.getUser(player)
     val lastActions: List<DiggingAction>
         get() = packetLastActions.toList()
-    var lastSimulatedTicks: Double? = null
-    var lastSimulatedTime: Long? = null
 
     private var packetLastActions = ArrayDeque<DiggingAction>(LAST_ACTION_QUEUE_SIZE)
 
@@ -50,6 +54,13 @@ class PlayerManager(val player: Player) {
         packetLastActions.addLast(action)
     }
 
+    fun addSimulationDiffTime(diffTime: Double){
+        if (lastSimulationDiffTime.size >= LAST_SIMULATION_DIFF_TIME_QUEUE_SIZE) {
+            lastSimulationDiffTime.removeFirst()
+        }
+        lastSimulationDiffTime.addLast(diffTime)
+    }
+
     fun setEndStoneDigging(action: DiggingAction) {
         lastEndStoneDigs[action] = System.currentTimeMillis()
     }
@@ -73,5 +84,11 @@ class PlayerManager(val player: Player) {
     private fun isInWater(player: Player): Boolean {
         val eyeBlock = player.eyeLocation.block
         return eyeBlock.type == Material.WATER
+    }
+
+    fun getSimulationReliability(): Double{
+        val activationCenterDividend = LAST_SIMULATION_DIFF_TIME_QUEUE_SIZE / 2
+        val evaluationCount = lastSimulationDiffTime.size.toDouble() / activationCenterDividend
+        return tanh(evaluationCount)
     }
 }

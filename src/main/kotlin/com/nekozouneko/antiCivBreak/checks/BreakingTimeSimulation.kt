@@ -16,6 +16,7 @@ class BreakingTimeSimulation : PacketChecker() {
     }
     companion object {
         const val ALLOWED_DIFF_TICKS = 0.8
+        const val CONSIDERED_DIFF_ERROR_TICKS = 10.0
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
         val diggingDuration = manager.getActionDuration(DiggingAction.START_DIGGING) ?: return
@@ -27,6 +28,13 @@ class BreakingTimeSimulation : PacketChecker() {
         if(predictionTicks == 0.0) return
         manager.lastSimulatedTicks = predictionTicks
         manager.lastSimulatedTime = System.currentTimeMillis()
+
+        val clampedDiffTicks = when {
+            diffTicks >= CONSIDERED_DIFF_ERROR_TICKS -> CONSIDERED_DIFF_ERROR_TICKS
+            diffTicks <= -CONSIDERED_DIFF_ERROR_TICKS -> -CONSIDERED_DIFF_ERROR_TICKS
+            else -> diffTicks
+        }
+        manager.addSimulationDiffTime(clampedDiffTicks)
 
         //For Debug Mode
         val debugMessage = "§8[§bBreakingTimeSimulation§8] §fUser: ${manager.player.name}, Prediction: ${predictionTicks}, Actual: ${totalTicks}, Diff: ${diffTicks}"
