@@ -12,6 +12,7 @@ class SimulationResultAnalysis : PacketChecker() {
     init {
         checkType = "SimulationResultAnalysis"
         description = "シミュレーション結果を信頼度評価します"
+        maxViolation = 2
     }
     companion object{
         private const val VIOLATION_THRESHOLD = 0.2

@@ -12,6 +12,7 @@ import com.nekozouneko.antiCivBreak.checks.InvalidPacket
 import com.nekozouneko.antiCivBreak.checks.SimulationResultAnalysis
 import com.nekozouneko.antiCivBreak.commands.CivSimulateCommand
 import com.nekozouneko.antiCivBreak.commands.CivDebugCommand
+import com.nekozouneko.antiCivBreak.commands.CivReloadCommand
 import com.nekozouneko.antiCivBreak.listeners.BlockBreakListener
 import com.nekozouneko.antiCivBreak.listeners.PlayerDiggingPacketListener
 import com.nekozouneko.antiCivBreak.listeners.PlayerJoinListener
@@ -73,6 +74,9 @@ class AntiCivBreak : JavaPlugin() {
     override fun onEnable() {
         instance = this
 
+        //Configuration
+        saveDefaultConfig()
+
         //Initialize PacketEvents
         PacketEvents.getAPI().init()
 
@@ -87,6 +91,7 @@ class AntiCivBreak : JavaPlugin() {
         //Commands
         getCommand("civdebug")?.setExecutor(CivDebugCommand())
         getCommand("civsimulate")?.setExecutor(CivSimulateCommand())
+        getCommand("civreload")?.setExecutor(CivReloadCommand())
 
         //PlayerManager AutoFixer (Prevention Memory Leak)
         server.scheduler.runTaskTimer(this, Runnable {

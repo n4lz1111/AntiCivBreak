@@ -10,11 +10,15 @@ commands:
     permission: anticivbreak.commands.civdebug
   civsimulate:
     permission: anticivbreak.commands.civsimulate
+  civreload:
+    permission: anticivbreak.commands.civreload
 
 permissions:
   anticivbreak.commands.civdebug:
     default: op
   anticivbreak.commands.civsimulate:
+    default: op
+  anticivbreak.commands.civreload:
     default: op
   anticivbreak.notify:
     default: op

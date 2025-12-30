@@ -1,0 +1,5 @@
+punishments:
+  autoban: true
+  reason:
+    - "不正なチートを検出したため、アクセスが禁止されています。"
+    - "間違いである場合は、Ticketまでお問い合わせください。"
