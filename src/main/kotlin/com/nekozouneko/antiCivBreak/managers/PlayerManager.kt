@@ -3,11 +3,8 @@ package com.nekozouneko.antiCivBreak.managers
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.player.DiggingAction
 import com.github.retrooper.packetevents.protocol.player.User
-import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import kotlin.math.abs
-import kotlin.math.pow
 
 class PlayerManager(val player: Player) {
     companion object{
@@ -20,8 +17,6 @@ class PlayerManager(val player: Player) {
         get() = packetLastActions.toList()
     var lastSimulatedTicks: Double? = null
     var lastSimulatedTime: Long? = null
-    var lastVelocityY: Double? = null
-    var lastFallDistance: Float? = null
 
     private var packetLastActions = ArrayDeque<DiggingAction>(LAST_ACTION_QUEUE_SIZE)
 
