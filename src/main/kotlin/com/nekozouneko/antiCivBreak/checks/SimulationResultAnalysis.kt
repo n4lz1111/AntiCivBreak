@@ -12,10 +12,10 @@ class SimulationResultAnalysis : PacketChecker() {
     init {
         checkType = "SimulationResultAnalysis"
         description = "シミュレーション結果を信頼度評価します"
-        maxViolation = 2
+        maxViolation = 3
     }
     companion object{
-        private const val VIOLATION_THRESHOLD = 0.2
+        private const val VIOLATION_THRESHOLD = 0.5
     }
     override fun handle(manager: PlayerManager, action: WrapperPlayClientPlayerDigging, event: PacketReceiveEvent) {
         if(action.action != DiggingAction.FINISHED_DIGGING) return
