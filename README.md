@@ -14,15 +14,15 @@ BreakingTimeSimulationの似たもの同士です。実際に破壊されるプ�
 ### `DestructionRangeLimitation`
 プレイヤーの視点位置から最短となるブロックの表面のある一点との距離が、通常のクライアントで破壊できるリーチを超えた破壊をキャンセルします。レイトレーシングの計算量を削減する目的もあります。
 ### `InvalidPacket`
-CivBreakBypassのためのパケットをcancelします
+BypassのためにSTOPパケットに挟んで送られてくる通常では送信されないパケットをCancelします
 ## CivBreakとは？
 ### `ブロック破壊の仕組み`
 マインクラフトでブロックを破壊するには、主に3つの「パケット」をクライアントがサーバーに送信します。
-#### START_DIGGING
+#### START_DIGGING(START_DESTROY_BLOCK)
 クライアントが特定のブロックの破壊を開始したときに送信パケットです。
-#### FINISHED_DIGGING
+#### FINISHED_DIGGING(STOP_DESTROY_BLOCK)
 クライアントが特定のブロックを破壊し終えたときに送信されるパケットです。
-#### CANCELLED_DIGGING
+#### CANCELLED_DIGGING(ABORT_DESTROY_BLOCK)
 クライアントが特定のブロックの破壊を開始したものの、視点がズレたり途中でやめるなどして破壊がキャンセルされたときに送信されるパケットです。
 ### `CivBreakの仕組み`
 サーバーは通常、プレイヤーから送信されるブロック破壊操作をもとに、採掘の進捗（破壊進行度）を内部的に蓄積し、その進捗が一定値に達した後破壊完了が送信されるとブロックを破壊したと判断します。
